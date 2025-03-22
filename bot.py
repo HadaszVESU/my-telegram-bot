@@ -21,11 +21,17 @@ URLS = [
 # Inicjalizacja bota Telegrama
 bot = telegram.Bot(token=TOKEN)
 
+# Nagłówek User-Agent, aby naśladować przeglądarkę internetową
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+}
+
 # Funkcja do sprawdzania stron
 def check_outlet():
     for url in URLS:
         logging.info(f'Rozpoczynam monitorowanie strony: {url}')
-        response = requests.get(url)
+        # Dodanie nagłówka User-Agent do zapytania
+        response = requests.get(url, headers=headers)
         
         # Sprawdzamy, czy odpowiedź z serwera jest poprawna
         if response.status_code != 200:

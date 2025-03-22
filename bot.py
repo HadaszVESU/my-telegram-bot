@@ -4,6 +4,7 @@ import telegram
 import schedule
 import time
 import logging
+import asyncio
 
 # Ustawienie logowania
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
@@ -20,6 +21,12 @@ URLS = [
 
 # Inicjalizacja bota Telegrama
 bot = telegram.Bot(token=TOKEN)
+
+# Funkcja wysyłania testowej wiadomości (asynchronicznie)
+async def send_test_message():
+    test_message = "Bot działa na Heroku i monitoruje karty graficzne!"
+    logging.info(f"Wysyłam testową wiadomość: {test_message}")
+    await bot.send_message(chat_id=CHAT_ID, text=test_message)
 
 # Funkcja do sprawdzania stron
 def check_outlet():
@@ -47,11 +54,14 @@ def check_outlet():
             # Jeśli znajdziesz produkt, wyślij powiadomienie
             message = f'Nowa karta graficzna: {name}\nLink: {link}'
             logging.info(f'Wysyłam powiadomienie: {message}')
-            bot.send_message(chat_id=CHAT_ID, text=message)
+            asyncio.run(bot.send_message(chat_id=CHAT_ID, text=message))  # Użyj asyncio.run do wysyłania wiadomości
 
 # Funkcja, która uruchamia sprawdzanie co jakiś czas
 def job():
     check_outlet()
+
+# Uruchom testową wiadomość przy starcie bota
+asyncio.run(send_test_message())
 
 # Zaplanuj, aby funkcja `job` była uruchamiana co 10 minut
 schedule.every(10).minutes.do(job)
